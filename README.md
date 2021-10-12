@@ -1,2 +1,2 @@
 # Raspberry-Pi-FM-DJ
-Welcome.
+Welcome. This project is not finshed yet. Come back later.
