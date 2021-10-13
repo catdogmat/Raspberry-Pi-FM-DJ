@@ -1,3 +1,5 @@
+#!/bin/python3
+
 print("Raspberry-Pi-FM-DJ.py")
 print("Raspberry-Pi-FM-DJ code made by catdogmat/beano09 at:")
 print("https://github.com/catdogmat/Raspberry-Pi-FM-DJ")
@@ -5,15 +7,16 @@ print("PiFM code made by Oliver Mattos and Oskar Weigl at:")
 print("https://github.com/rm-hull/pifm")
 # Imports
 print("Imports:")
-print("Importing OS, random, wave, contextlib and time.")
+print("Importing OS, random, wave, contextlib, subprocess, datetime and time.")
 import os, random
 import wave
 import contextlib
+import subprocess
+from datetime import *
 import time
-print("Imported OS, random, wave, contextlib and time.")
+print("Imported OS, random, wave, contextlib, subprocess, datetime and time.")
 # Config
 print("Config:")
-name = "nameofradio" # You don't have to touch this
 fmsettings = "100.0"
 introdir = "enterpathhere"
 songdir = "enterpathhere"
@@ -24,7 +27,7 @@ print("introdir is set to " + introdir)
 print("songdir is set to " + songdir)
 print("outrodir is set to " + outrodir)
 print("funnydir is set to " + funnydir)
-# Unused Settings. Will be used in a later update.
+# Timeplaylist settings.
 timeplaylists = "off" # This can be on or off.
 playlist1 = "off" # This can be on or off.
 playlist2 = "off" # This can be on or off.
@@ -46,11 +49,6 @@ playlist2outrodir = "enterpathhere"
 playlist3outrodir = "enterpathhere"
 playlist4outrodir = "enterpathhere"
 playlist5outrodir = "enterpathhere"
-playlist1funnydir = "enterpathhere"
-playlist2funnydir = "enterpathhere"
-playlist3funnydir = "enterpathhere"
-playlist4funnydir = "enterpathhere"
-playlist5funnydir = "enterpathhere"
 playlist1starttime = "entertimehere"
 playlist2starttime = "entertimehere"
 playlist3starttime = "entertimehere"
@@ -66,79 +64,100 @@ config = "0.1"
 name = "Raspberry-Pi-FM-DJ" # You don't have to touch this
 # Code starts here
 print("Code:")
+# Time Playlist Stuff
+print("Setting up time playlists.")
+onintrodir = introdir
+onsongdir = songdir
+onoutrodir = outrodir
+onfunnydir = funnydir
+timeofplaylists = datetime.strptime("03/02/21 16:30", "%d/%m/%y %H:%M")
+timetogo = "{:d}:{:02d}".format(time.hour, time.minute)
+if timetogo > playlist1starttime:
+    if timetogo < playlist1endtime:
+        if timeplaylists == "yes":
+            if playlist1 == "yes":
+               onintrodir = playlist1introdir
+               onsongdir = playlist1songdir
+               onoutrodir = playlist1outrodir
+if timetogo > playlist2starttime:
+    if timetogo < playlist2endtime:
+        if timeplaylists == "yes":
+            if playlist2 == "yes":
+               onintrodir = playlist2introdir
+               onsongdir = playlist2songdir
+               onoutrodir = playlist2outrodir
+if timetogo > playlist3starttime:
+    if timetogo < playlist3endtime:
+        if timeplaylists == "yes":
+            if playlist3 == "yes":
+               onintrodir = playlist3introdir
+               onsongdir = playlist3songdir
+               onoutrodir = playlist3outrodir
+if timetogo > playlist4starttime:
+    if timetogo < playlist4endtime:
+        if timeplaylists == "yes":
+            if playlist4 == "yes":
+               onintrodir = playlist4introdir
+               onsongdir = playlist4songdir
+               onoutrodir = playlist4outrodir
+if timetogo > playlist5starttime:
+    if timetogo < playlist5endtime:
+        if timeplaylists == "yes":
+            if playlist5 == "yes":
+               onintrodir = playlist5introdir
+               onsongdir = playlist5songdir
+               onoutrodir = playlist5outrodir
+print("Setup time playlists.")
 # This picks a song
 print("Picking filename")
-file = random.choice(os.listdir(introdir))
+file = random.choice(os.listdir(onintrodir))
 print("Filename picked was " + file)
 # This finds how long the .wav is
 print("Finding duration of intro")
-fname = introdir + file
+fname = onintrodir + file
 with contextlib.closing(wave.open(fname,'r')) as f:
     frames = f.getnframes()
     rate = f.getframerate()
     duration = frames / float(rate)
-    introdur = duration + 1
-print("Intro is " + introdur + " seconds long")
+    onintrodur = duration + 1
+print("Intro is " + onintrodur + " seconds long")
 # This plays the intro
-print("TO ADD")
-os.system('sudo ./pifm'  + introdir + file + " " + fmsettings)
-print("TO ADD")
-# Sleeps intil done
-print("TO ADD")
-time.sleep(introdur)
-print("TO ADD")
+print("Playing intro")
+subprocess.run('sudo ./pifm'  + onintrodir + file + " " + fmsettings)
 #This finds how long the song is
-print("TO ADD")
-fname = songdir + file
+print("Finding how long the song is")
+fname = onsongdir + file
 with contextlib.closing(wave.open(fname,'r')) as f:
     frames = f.getnframes()
     rate = f.getframerate()
     duration = frames / float(rate)
-    songdur = duration + 1
-print("TO ADD")
+    onsongdur = duration + 1
 # Playing the song
-print("TO ADD")
-os.system('sudo ./pifm'  + songdir + file + " " + fmsettings)
-print("TO ADD")
-# Waits
-print("TO ADD")
-time.sleep(songdur)
-print("TO ADD")
+print("Playing song")
+subprocess.run('sudo ./pifm'  + onsongdir + file + " " + fmsettings)
 # Finds how long the outro is
-print("TO ADD")
-fname = outrodir + file
+print("Finding how long the outro is")
+fname = onoutrodir + file
 with contextlib.closing(wave.open(fname,'r')) as f:
     frames = f.getnframes()
     rate = f.getframerate()
     duration = frames / float(rate)
-    outrodur = duration + 1
-print("TO ADD")
+    onoutrodur = duration + 1
 # Plays outro
-print("TO ADD")
-os.system('sudo ./pifm'  + outrodir + file + " " + fmsettings)
-print("TO ADD")
-# Sleeps
-print("TO ADD")
-time.sleep(outrodur)
-print("TO ADD")
+print("Playing outro")
+subprocess.run('sudo ./pifm'  + onoutrodir + file + " " + fmsettings)
 # Finds funny part
-print("TO ADD")
-funnyfile = random.choice(os.listdir(funnydir))
-print("TO ADD")
+print("Finding funny part")
+funnyfile = random.choice(os.listdir(onfunnydir))
 # Finds length
-print("TO ADD")
-fname = funnydir + funnyfile
+print("Finding how long the funny part is")
+fname = onfunnydir + funnyfile
 with contextlib.closing(wave.open(fname,'r')) as f:
     frames = f.getnframes()
     rate = f.getframerate()
     duration = frames / float(rate)
-    funnydur = duration + 1
-print("TO ADD")
+    onfunnydur = duration + 1
 # Plays
-print("TO ADD")
-os.system('sudo ./pifm'  + funnydir + funnyfile + " " + fmsettings)
-print("TO ADD")
-# Sleeps
-print("TO ADD")
-time.sleep(funnydur)
-print("TO ADD")
+print("Playing funny part")
+subprocess.run('sudo ./pifm'  + onfunnydir + funnyfile + " " + fmsettings)
+print("Done!")
